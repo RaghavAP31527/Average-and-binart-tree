@@ -1,0 +1,58 @@
+from typing import List
+from queue import Queue
+
+class TreeNode:
+    def __init__(self, val):
+        self.val = val
+        self.left = None
+        self.right = None
+
+def averageLevels(root: TreeNode) -> List[float]:
+    result = []
+    if not root:
+        return result
+
+    levelQueue = Queue()
+    levelQueue.put(root)
+
+    while not levelQueue.empty():
+        levelSize = levelQueue.qsize()
+        levelSum = 0.0
+
+        for i in range(levelSize):
+            node = levelQueue.get()
+            levelSum += node.val
+
+            if node.left:
+                levelQueue.put(node.left)
+            if node.right:
+                levelQueue.put(node.right)
+
+        result.append(levelSum / levelSize)
+
+    return result
+
+def buildTree(vals: List[int], index: int) -> TreeNode:
+    if index >= len(vals) or vals[index] == -1:
+        return None
+
+    node = TreeNode(vals[index])
+    node.left = buildTree(vals, 2 * index + 1)
+    node.right = buildTree(vals, 2 * index + 2)
+
+    return node
+
+if __name__ == "__main__":
+    n = int(input())
+    vals = list(map(int, input().split()))
+
+    root = buildTree(vals, 0)
+
+    averages = averageLevels(root)
+    for avg in averages:
+      if avg.is_integer():
+        print(int(avg), end=" ")
+      else:
+        print(avg, end=" ")
+ 
+
